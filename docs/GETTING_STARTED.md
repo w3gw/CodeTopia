@@ -22,7 +22,7 @@ Install the following softwares and dependecies before starting.
 ## 3, Clone to your local enviourment.
 
 ```
-git clone https://github.com/EthioOpenSource/CodeTopia.git
+git clone https://github.com/endalk200/CodeTopia.git
 ```
 
 ## 4. Update your master branch.
@@ -30,7 +30,7 @@ git clone https://github.com/EthioOpenSource/CodeTopia.git
 Keeping your master branch is verry crucial since there may be some changes made after forking the repo. You should regulary update your master branch. To dod this run the following command.
 
 ``` 
-git add upstream https://github.com/EthioOpenSource/CodeTopia.git
+git add upstream https://github.com/endalk200/CodeTopia.git
 
 git fetch upstream 
 

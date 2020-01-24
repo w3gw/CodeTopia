@@ -55,9 +55,9 @@ Your contribution is greatly valued. Contribution can be as easy as fixing some 
 
 ### How can i start?
 
-A good first start is to join our [Telegram Group](https://t.me/CodeTopia). After Joining the group you should also read [Code of Conduct](https://github.com/EthioOpenSource/CodeTopia/docs/CODE_OF_CONDUCT.md) you have to follow. Then you should read our [TIMELINE](https://github.com/EthioOpenSource/CodeTopia/docs/TIMELINE.md) documentation which outlines features and things that we are working on currently and you can contribute.
+A good first start is to join our [Telegram Group](https://t.me/CodeTopia). After Joining the group you should also read [Code of Conduct](https://github.com/endalk200/CodeTopia/docs/CODE_OF_CONDUCT.md) you have to follow. Then you should read our [TIMELINE](https://github.com/endalk200/CodeTopia/docs/TIMELINE.md) documentation which outlines features and things that we are working on currently and you can contribute.
 
-After reading those documentations follow [Getting Started](https://github.com/EthioOpenSource/CodeTopia/docs/getting_started.md) guide to get started on your local envirounment.
+After reading those documentations follow [Getting Started](https://github.com/endalk200/CodeTopia/docs/getting_started.md) guide to get started on your local envirounment.
 
 ## Types of Contributions
 
@@ -78,7 +78,7 @@ If you find a bug, try your best to provide the necessary information to replica
 * Any details about your local setup that might be helpful in troubleshooting.
 * Detailed steps to reproduce the bug.
 
-.. _`this project`: https://github.com/EthioOpenSource/CodeTopia
+.. _`this project`: https://github.com/endalk200/CodeTopia
 
 ### Fix Bugs
 
@@ -102,7 +102,7 @@ If you are proposing a feature:
 * Keep the scope as narrow as possible, to make it easier to implement.
 * Remember that this is a volunteer-driven project, and that contributions are welcome :)
 
-.. _`this project`: https://github.com/EthioOpenSource/CodeTopia/issues
+.. _`this project`: https://github.com/endalk200/CodeTopia/issues
 
 ### Issues and support
 
