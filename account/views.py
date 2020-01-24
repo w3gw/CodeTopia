@@ -44,7 +44,7 @@ class CustomLoginView(LoginView):
     form_class = AuthenticationForm
     template_name = "account/login.html"
 
-    title = _("'CodeTopia | Login'")
+    title = _("CodeTopia | Login")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -90,7 +90,6 @@ class CustomLogoutView(LogoutView):
     """Class for loging authenticated out"""
     extra_context = None
     next_page = None
-    title = _('CodeTopia | Logged out')
 
     @method_decorator(never_cache)
     def dispatch(self, request, *args, **kwargs):
