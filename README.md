@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/endalk200/CodeTopia.svg?branch=master)](https://travis-ci.com/endalk200/CodeTopia)
+
 # CodeTopia
 
 ## :vulcan_salute: WELLCOME to CodeTopia.
