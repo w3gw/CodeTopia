@@ -83,14 +83,17 @@ class TestCustomLoginView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertRedirects(
             response=response, 
-            expected_url=reverse("homepage"), # expected redirect target URL
-            status_code=302, # status_code of the first request
-            target_status_code=200, # response.status_code of target view
+            expected_url=reverse("homepage"),  # expected redirect target URL
+            status_code=302,  # status_code of the first request
+            target_status_code=200,  # response.status_code of target view
             msg_prefix='Log in view POST method redirection Error',
             fetch_redirect_response=True)
-    
+
         self.assertEqual(response.redirect_chain, [(reverse("homepage"), 302)])
-        self.assertEqual(first=response.context["title"], second="CodeTopia", msg="Redirect target page title Error" )
+        self.assertEqual(
+            first=response.context["title"], 
+            second="CodeTopia", 
+            msg="Redirect target page title Error" )
         self.assertTemplateUsed(response=response, template_name="index.html", count=1)
 
     @override_settings(LOGIN_URL=reverse("homepage"))
@@ -136,7 +139,8 @@ class TestCustomLogoutView(TestCase):
         self.assertEqual(
             first=response.status_code, 
             second=302, 
-            msg="response.status_code Error for http://%s/ with follow=False"% reverse("account:user_logout"))
+            msg="response.status_code Error for http://%s/ with follow=False"%
+                reverse("account:user_logout"))
         self.assertRedirects(
             response=response, 
             expected_url=reverse("homepage"), 
@@ -156,7 +160,8 @@ class TestCustomLogoutView(TestCase):
         self.assertEqual(
             first=response.status_code, 
             second=200, 
-            msg="response.status_code Error for http://%s/ with follow=True"% reverse("account:user_logout"))
+            msg="response.status_code Error for http://%s/ with follow=True"% 
+            reverse("account:user_logout"))
         self.assertRedirects(
             response=response, 
             expected_url=reverse("homepage"), 

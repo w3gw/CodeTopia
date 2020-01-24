@@ -35,5 +35,7 @@ class Homepage(View):
         return context
 
     def get(self, *args, **kwargs):
-        return render(request=self.request, template_name=self.template_name, context=self.get_context_data())
- 
+        return render(
+            request=self.request, 
+            template_name=self.template_name, 
+            context=self.get_context_data())

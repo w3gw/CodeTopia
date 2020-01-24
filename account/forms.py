@@ -30,9 +30,7 @@ from django.utils.translation import gettext, gettext_lazy as _
 
 UserModel = get_user_model()
 
-__all__ = [
-    "AuthenticationForm"
-    ]
+__all__ = [ "AuthenticationForm" ]
 
 def _unicode_ci_compare(s1, s2):
     """
@@ -107,10 +105,9 @@ class AuthenticationForm(forms.Form):
         if self.cleaned_data.get('username') is not None and self.cleaned_data.get('password'):
             # authenticate will return user instance is the user exists and authenticated
             self.user_cache = authenticate(
-                    request=self.request,
-                    username=self.cleaned_data.get('username'), 
-                    password=self.cleaned_data.get('password')
-                )
+                request=self.request,
+                username=self.cleaned_data.get('username'), 
+                password=self.cleaned_data.get('password'))
             if self.user_cache is None:
                 # if there is no user with the cridentials get_invalid_login_error()
                 raise self.get_invalid_login_error()
