@@ -8,6 +8,14 @@ from django.shortcuts import (
     HttpResponseRedirect, 
     resolve_url
 )
+from django.urls import (
+    reverse,
+    reverse_lazy
+)
+
+from django.template import loader
+
+from django.core.mail import EmailMultiAlternatives
 
 from django.contrib.auth import (
     REDIRECT_FIELD_NAME, get_user_model, login as auth_login,
@@ -16,9 +24,14 @@ from django.contrib.auth import (
 from django.contrib.auth.models import User
 from django.contrib.auth.views import (
     LoginView,
-    LogoutView
+    LogoutView,
+    PasswordResetView,
+    PasswordResetConfirmView,
+    PasswordResetDoneView,
+    PasswordResetCompleteView
 )
 
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext, gettext_lazy as _
 from django.utils.http import (
@@ -27,9 +40,16 @@ from django.utils.http import (
 
 from django.views.decorators.cache import never_cache
 
+from django.views.generic.base import View
+
+from django.contrib import messages
+
 # Project modules
 from .forms import (
     AuthenticationForm,
+    PasswordResetForm,
+    SetPasswordForm,
+    UserCreationForm
 )
 
 # Third party modules
@@ -37,8 +57,75 @@ from .forms import (
 
 __all__ = [
     "CustomLoginView",
-    "CustomLogoutView"
+    "CustomLogoutView",
+    "CustomPasswordResetView",
+    "CustomPasswordResetDoneView",
+    "CustomPasswordResetConfirmView",
+    "CustomPasswordResetCompleteView",
+    "CreateUserView"
 ]
+
+class CreateUserView(View):
+    """Class for creating user with no priviledges"""
+
+    template_name = "account/create_account.html"
+
+    form_class = UserCreationForm
+    title = _('CodeTopia | Create Account')
+    extra_context = None
+
+    # Error messages for the view
+    error_messages = {
+        "already_have_account": _("You already have an account and can not create another account.")
+    }
+    # Success messages for the view
+    success_messages = {
+        "account_created": _("Congradulation %s you have created  an account succesfully.")
+    }
+
+    def get_context_data(self, *args, **kwargs):
+        """Return all context data by collecting it."""
+        current_site = get_current_site(self.request)
+        context = {
+            "site": current_site,
+            "site_name": current_site.name,
+            "title": self.title
+        }
+        context.update(**(self.extra_context or {}))
+        return context
+
+    def get_form_class(self, *args, **kwargs):
+        """Return the instance of the for class to be used."""
+        return self.form_class(*args)
+
+    def get(self, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            messages.error(request=self.request, message=self.error_messages.get("already_have_account"))
+            return HttpResponseRedirect(reverse("core:homepage"))
+
+        self.extra_context = {
+            "form": self.get_form_class()
+        }
+        return render(request=self.request, template_name=self.template_name, context=self.get_context_data())
+
+    def post(self, *args, **kwargs):
+        form = self.get_form_class(self.request.POST)
+        if form.is_valid():
+            user_cache = form.save()
+            messages.success(
+                request=self.request, 
+                message=self.success_messages.get("account_created") % user_cache.username 
+            )
+
+            return HttpResponseRedirect(reverse(viewname="account:user_login"))
+
+        # If the form is invalid return the form with error messages
+        self.extra_context = {
+            **self.get_context_data(),
+            "form": form
+        }
+        return render(request=self.request, template_name=self.template_name, context=self.get_context_data())
+
 
 class CustomLoginView(LoginView):
     form_class = AuthenticationForm
@@ -109,4 +196,54 @@ class CustomLogoutView(LogoutView):
             'title': self.title,
             **(self.extra_context or {})
         })
+        return context
+
+
+class CustomPasswordResetView(PasswordResetView):
+    email_template_name = 'account/pwd_reset/password_reset_email.html'
+    subject_template_name = 'account/pwd_reset/password_reset_subject.txt'
+    # extra_email_context
+    html_email_template_name = 'account/pwd_reset/password_reset_html_template.html'
+
+    success_url = reverse_lazy('account:user_password_reset_done')
+    title = _('CodeTopia | Request Password Reset')
+    form_class = PasswordResetForm
+    template_name = "account/pwd_reset/password_reset.html"
+    extra_context = {
+        "expiration_date": timezone.now()
+    }
+
+class CustomPasswordResetDoneView(PasswordResetDoneView):
+    template_name = "account/pwd_reset/password_reset_done.html"
+    title = _('CodeTopia | Password Reset Sent')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'title': self.title,
+            **(self.extra_context or {})
+        })
+        return context
+
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    form_class = SetPasswordForm
+    success_url = reverse_lazy("account:user_password_reset_complete")
+
+    title = _('CodeTopia | Enter New Password')
+    template_name = "account/pwd_reset/password_reset_confirm.html"
+    extra_context = {
+        # add extra context to be passed
+    }
+
+class CustomPasswordResetCompleteView(PasswordResetCompleteView):
+    template_name = "account/pwd_reset/password_reset_complete.html"
+    title = _('CodeTopia | Password Reset Complete')
+
+    extra_context = None
+
+    def get_context_data(self, **kwargs):
+        # the super method is calling PasswordContextMixin from PasswordResetCompleteView
+        context = super().get_context_data(**kwargs)
+        context["login_url"] = resolve_url(settings.LOGIN_URL)
         return context

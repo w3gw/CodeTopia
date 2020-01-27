@@ -9,6 +9,7 @@ verify_ssl = true
 django = "==3.0.2"
 flake8 = "*"
 tox = "*"
+coverage = "*"
 
 [requires]
 python_version = "3.7"

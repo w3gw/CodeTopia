@@ -15,3 +15,11 @@
 * added test for login functionality
 * added test for logout functionality
 * updated some documentations
+
+## 2020-01-26
+* added sign up functionality
+* written tests for CreateUserView
+* written tets for CreateUserForm
+
+## 2020-01-27
+* added PasswordReset functionality
