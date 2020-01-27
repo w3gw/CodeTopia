@@ -1,6 +1,6 @@
 # Contributing to this project
 
-Thank you!!! We wellcome and Thank you for desiding to contribute to this project. This documentations aim is to make contributing to this project as easy as possible for you. We hope you will pleasent experience in participating on this project. If you have some ideas to add to this documentation that can eleviate some problems and difficulties on participating on this project.
+Thank you!!! We wellcome and Thank you for deciding to contribute to this project. This documentations goal is to make contributing to this project as easy as possible for you. We hope you will have pleasent experience in participating on this project. If you have some ideas to add to this documentation that can eleviate some problems and difficulties on participating on this project feel free to open a pull request.
 
 ## You might be asking
 
@@ -17,7 +17,7 @@ In short **Any skill and level**. If you have some knowledge or understanding of
 * Continuos Integration / Continous Development / Continous Deployment
 * Devops practises
 
-You might want to check these out.
+You might want to check those out.
 
 ### what programming languages are used in this project?
 
@@ -26,6 +26,7 @@ Note if you have a better idea on the following choices open a discusion on Tele
 
 * python
 * c++
+c++ will be used for file compression and encryption.
 * Typescript
 * javascript
 * HTML
@@ -36,11 +37,11 @@ Note if you have a better idea on the following choices open a discusion on Tele
 
 The following frameworks are going to be used for the creation of the project.
 
-* django
-django is web framework for cereating complex, robust and stable web applications. It is entirely written is python.
+* django:
+Django is web framework for cereating complex, robust and stable web applications. It is entirely written is python.
 
-* django-rest-framework
-* django application extension for creating restfull APIs using django.
+* django-rest-framework:
+Python module based on python. Enables you to create REST API's and integrate it to web applications.
   
 * django-weasyprint
 web based python framework for creating PDF files from from HTML/CSS
@@ -61,7 +62,7 @@ After reading those documentations follow [Getting Started](https://github.com/e
 
 ## Types of Contributions
 
-### Pull Request Process
+### Open Pull Request
 
 If you wish to make suggestions to this project's code, please keep this few considerations in mind before pushing your **Pull Requests**:
 
