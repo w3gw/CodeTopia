@@ -22,7 +22,7 @@ Fields to create an account are [first_name, last_name, email, username, passwor
 * implement changing user password by providing the old password.
 * implement password reset.
 * create profile model.
-  
-  Profile model will contain additional field related to the user creating an account.
+
+Profile model will contain additional field related to the user creating an account.
 
 _If you have a better or adjustment to the above outline feel free to open a discussion on telegram. If you have implemented the above features create pull request and open a discussion on GitHub and Telegram._

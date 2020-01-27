@@ -126,6 +126,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
+"""Date Related Settings"""
+FIRST_DAY_OF_WEEK = 1 # Monday
+
+
 """Email Related Settings"""
 # For development use filebased EmailBackend
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
@@ -142,6 +146,7 @@ EMAIL_USE_LOCALTIME = True
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
 SERVER_EMAIL = os.environ.get("SERVER_EMAIL")
 
+
 """Authentication Related Settings"""
 LOGIN_URL = "/user/login/"
 LOGIN_REDIRECT_URL = "/"
@@ -149,6 +154,17 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
 PASSWORD_RESET_TIMEOUT_DAYS = 1
+
+
+"""Upload Related Settings"""
+DATA_UPLOAD_MAX_MEMORY_SIZE = 2621440 # 2.5MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440 # 2.5 MB
+
+FILE_UPLOAD_HANDLERS = [
+    'django.core.files.uploadhandler.MemoryFileUploadHandler',
+    'django.core.files.uploadhandler.TemporaryFileUploadHandler',
+]
+
 
 """Static File Related Settings"""
 STATIC_URL = '/static/'
