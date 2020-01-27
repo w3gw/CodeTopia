@@ -27,9 +27,12 @@ from django.utils.http import (
 
 from django.views.decorators.cache import never_cache
 
+from django.views.generic.base import View
+
 # Project modules
 from .forms import (
     AuthenticationForm,
+    UserCreationForm
 )
 
 # Third party modules
@@ -37,8 +40,73 @@ from .forms import (
 
 __all__ = [
     "CustomLoginView",
-    "CustomLogoutView"
+    "CustomLogoutView",
+    "CreateUserView"
 ]
+
+class CreateUserView(View):
+    """Class for creating user with no priviledges"""
+
+    template_name = "account/create_account.html"
+
+    form_class = UserCreationForm
+    title = _('CodeTopia | Create Account')
+    extra_context = None
+
+    # Error messages for the view
+    error_messages = {
+        "already_have_account": _("You already have an account and can not create another account.")
+    }
+    # Success messages for the view
+    success_messages = {
+        "account_created": _("Congradulation you have created  an account succesfully.")
+    }
+
+    def get_context_data(self, *args, **kwargs):
+        """Return all context data by collecting it."""
+        current_site = get_current_site(self.request)
+        context = {
+            "site": current_site,
+            "site_name": current_site.name,
+            "title": self.title
+        }
+        context.update(**(self.extra_context or {}))
+        return context
+
+    def get_form_class(self, *args, **kwargs):
+        """Return the instance of the for class to be used."""
+        return self.form_class(*args)
+
+    def get(self, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            messages.error(request=self.request, message=self.error_messages.get("already_have_account"))
+            return HttpResponseRedirect(reverse("core:homepage"))
+
+        self.extra_context = {
+            "form": self.get_form_class()
+        }
+        return render(request=self.request, template_name=self.template_name, context=self.get_context_data())
+
+    def post(self, *args, **kwargs):
+        form = self.get_form_class(self.request.POST)
+        if form.is_valid():
+            user_cache = form.save()
+            messages.success(request=self.request, message=self.success_messages.get("account_created"))
+
+            context = {
+                "site_name": self.get_context_data().get("site_name"),
+                "user": user_cache
+            }
+
+            return HttpResponseRedirect(reverse(viewname="create_profile", kwargs={"username": user_cache.username}))
+
+        # If the form is invalid return the form with error messages
+        self.extra_context = {
+            **self.get_context_data(),
+            "form": form
+        }
+        return render(request=self.request, template_name=self.template_name, context=self.get_context_data())
+
 
 class CustomLoginView(LoginView):
     form_class = AuthenticationForm

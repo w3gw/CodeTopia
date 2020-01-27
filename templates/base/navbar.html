@@ -3,5 +3,6 @@
         <li><a href="{% url 'account:user_logout' %}">Logout</a></li>
     {% else %}
         <li><a href="{% url 'account:user_login' %}">Login</a></li>
+        <li><a href="{% url 'account:create_user' %}">Sign up</a></li>
     {% endif %}
 </ul>

@@ -20,5 +20,6 @@ app_name = "account"
 
 urlpatterns = [
     path('user/login/', CustomLoginView.as_view(), name='user_login'),
-    path('user/logout/', CustomLogoutView.as_view(), name='user_logout')
+    path('user/logout/', CustomLogoutView.as_view(), name='user_logout'),
+    path('user/create-account/', CreateUserView.as_view(), name="create_user")
 ]
