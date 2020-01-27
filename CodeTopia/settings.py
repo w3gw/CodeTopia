@@ -127,7 +127,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 """Date Related Settings"""
-FIRST_DAY_OF_WEEK = 1 # Monday
+FIRST_DAY_OF_WEEK = 1
 
 
 """Email Related Settings"""
@@ -157,8 +157,8 @@ PASSWORD_RESET_TIMEOUT_DAYS = 1
 
 
 """Upload Related Settings"""
-DATA_UPLOAD_MAX_MEMORY_SIZE = 2621440 # 2.5MB
-FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440 # 2.5 MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 2621440
+FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440
 
 FILE_UPLOAD_HANDLERS = [
     'django.core.files.uploadhandler.MemoryFileUploadHandler',
