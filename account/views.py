@@ -312,6 +312,10 @@ class UserPasswordChangeView(PasswordContextMixin, FormView):
     template_name = "account/dashboard/change_password.html"
     title = _("CodeTopia | Chnage Password")
 
+    success_messages = {
+        "succesfull": _("You have successfully changed your password.")
+    }
+
     @method_decorator(sensitive_post_parameters())
     @method_decorator(csrf_protect)
     @method_decorator(login_required)
@@ -332,9 +336,17 @@ class UserPasswordChangeView(PasswordContextMixin, FormView):
 
     def form_valid(self, form):
         form.save()
-        # Updating the password logs out all other sessions for the user
-        # except the current one.
+
+        # Log out the user from other sessions and update the current session with
+        # new password hash
         update_session_auth_hash(self.request, form.user)
+
+        # send password changed message
+        messages.success(
+                request=self.request, 
+                message=self.success_messages.get("succesfull") 
+            )
+
         return super().form_valid(form)
 
     def post(self, request, *args, **kwargs):
