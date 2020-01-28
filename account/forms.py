@@ -175,13 +175,29 @@ class ProfileCreationForm(forms.ModelForm):
     help_texts = {
     }
 
-    widget_attributes = {
-        # add common HTML attributes
-    }
-
     class Meta:
         model = Profile
-        exclude = []
+        fields = '__all__'
+        labels = {
+            'profile_picture': Profile._meta.get_field("profile_picture").verbose_name
+        }
+        help_texts = {
+            'profile_picture': _('Must be less than 5MB. Otherwise will '
+                                'be compressed and loose some pixels'),
+        }
+        error_messages = {
+            'profile_picture': {
+                'file_too_large': _("The file is too large."),
+            },
+        }
+        widgets = {
+            'short_bio': forms.Textarea(attrs={
+                'cols': 80, 'rows': 20
+            }),
+            'bio': forms.Textarea(attrs={
+                'cols': 80, 'rows': 20
+            }),
+        }
 
     def _post_clean(self):
         super()._post_clean()
