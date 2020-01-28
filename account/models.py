@@ -10,6 +10,16 @@ class HightSchoolManager(models.Manager):
     def get_queryset(self):
         return super(HightSchoolManager, self).get_queryset().filter(education_background='HighSchool')
 
+class UnderGraduateManager(models.Manager):
+    """Model Manager for Profile model"""
+    def get_queryset(self):
+        return super(HightSchoolManager, self).get_queryset().filter(education_background='UnderGraduate')
+
+class PostGraduateManager(models.Manager):
+    """Model Manager for Profile model"""
+    def get_queryset(self):
+        return super(HightSchoolManager, self).get_queryset().filter(education_background='PostGraduate')
+
 def get_profile_pic_path(instance, filename):
     """Method that returns upload location for the current user's profile picture"""
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
@@ -79,6 +89,8 @@ class Profile(models.Model):
     )
 
     highschool = HightSchoolManager()
+    undergraduate = UnderGraduateManager()
+    postgraduateManager = PostGraduateManager()
 
     def __str__(self):
         return "%s"% self.user.username
