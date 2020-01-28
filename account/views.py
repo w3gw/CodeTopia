@@ -275,38 +275,11 @@ class CustomPasswordResetCompleteView(PasswordResetCompleteView):
         return context
 
 
-class UserDashboard(LoginRequiredMixin, UserPassesTestMixin, View):
-    """
-    UserDashboard where only the user can access
-    """
-    template_name = "account/dashboard/index.html"
-
-    def get_context_data(self, **kwargs):
-        context = {
-            "title": _("CodeTopia | %s"% self.kwargs.get("username"))
-        }
-        return context
-
-    def test_func(self):
-        """
-        Test the request sender if he has permission to access the page
-        """
-        return self.request.user.username == self.kwargs.get("username")
-
-    def get_test_func(self):
-        """
-        Call all tests that has to be passed to access the page
-        """
-        return self.test_func
-
-    def get(self, *args, **kwargs):
-        self.get_context_data().update({
-
-        })
-        return render(request=self.request, template_name=self.template_name, context=self.get_context_data())
-
-
 class UserPasswordChangeView(PasswordContextMixin, FormView):
+    """
+    View for changing user password using validated old password.
+    Interface for UserDashboard
+    """
     form_class = PasswordChangeForm
     success_url = None
     template_name = "account/dashboard/change_password.html"
@@ -364,3 +337,132 @@ class UserPasswordChangeView(PasswordContextMixin, FormView):
     # object, note that browsers only support POST for now.
     def put(self, *args, **kwargs):
         return self.post(*args, **kwargs)
+
+
+class RedirectUser(View):
+    """
+    Class for redirecting requests to user/<username> with permissions
+    """
+    permanent = True
+    user_private_dashboard_url = None
+    users_public_dashboard_url = None
+
+    def get_private_redirect_url(self, *args, **kwargs):
+        pass
+
+    def get_public_redirect_url(self, *args, **kwargs):
+        pass
+
+    def head(self, *args, **kwargs):
+        """Redirect head request"""
+        pass
+
+    def head(self, *args, **kwargs):
+        """Redirect head request"""
+        pass
+
+    def post(self, *args, **kwargs):
+        """Redirect head request"""
+        pass
+
+    def options(self, *args, **kwargs):
+        """Redirect head request"""
+        pass
+
+    def delete(self, *args, **kwargs):
+        """Redirect head request"""
+        pass
+
+    def put(self, *args, **kwargs):
+        """Redirect head request"""
+        pass
+
+    def patch(self, *args, **kwargs):
+        """Redirect head request"""
+        pass
+
+
+class RedirectView(View):
+    """Provide a redirect on any GET request."""
+    permanent = False
+    url = None
+    pattern_name = None
+    query_string = False
+
+    def get_redirect_url(self, *args, **kwargs):
+        """
+        Return the URL redirect to. Keyword arguments from the URL pattern
+        match generating the redirect request are provided as kwargs to this
+        method.
+        """
+        if self.url:
+            url = self.url % kwargs
+        elif self.pattern_name:
+            url = reverse(self.pattern_name, args=args, kwargs=kwargs)
+        else:
+            return None
+
+        args = self.request.META.get('QUERY_STRING', '')
+        if args and self.query_string:
+            url = "%s?%s" % (url, args)
+        return url
+
+    def get(self, request, *args, **kwargs):
+        url = self.get_redirect_url(*args, **kwargs)
+        if url:
+            if self.permanent:
+                return HttpResponsePermanentRedirect(url)
+            else:
+                return HttpResponseRedirect(url)
+        else:
+            logger.warning(
+                'Gone: %s', request.path,
+                extra={'status_code': 410, 'request': request}
+            )
+            return HttpResponseGone()
+
+    def head(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def options(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+
+class UserDashboard(LoginRequiredMixin, UserPassesTestMixin, View):
+    """
+    UserDashboard where only the user can access
+    """
+    template_name = "account/dashboard/index.html"
+
+    def get_context_data(self, **kwargs):
+        context = {
+            "title": _("CodeTopia | %s"% self.kwargs.get("username"))
+        }
+        return context
+
+    def test_func(self):
+        """
+        Test the request sender if he has permission to access the page
+        """
+        return self.request.user.username == self.kwargs.get("username")
+
+    def get_test_func(self):
+        """
+        Call all tests that has to be passed to access the page
+        """
+        return self.test_func
+
+    def get(self, *args, **kwargs):
+        return render(request=self.request, template_name=self.template_name, context=self.get_context_data())
