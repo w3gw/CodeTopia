@@ -23,3 +23,7 @@
 
 ## 2020-01-27
 * added PasswordReset functionality
+
+## 2020-01-28
+* added user dashboard
+* added password change functionality using old password

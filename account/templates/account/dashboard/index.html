@@ -31,7 +31,7 @@
 
 <h1>Wellcome {{ request.user.username }} to your dashboard</h1>
 <hr>
-<a href="">Change Password</a>
+<a href="{% url 'account:change_user_password' request.user.username %}">Change Password</a>
 <table id="user_info">
     <thead>
         <tr>
