@@ -1,6 +1,5 @@
 .vscode
 __pycache__
 db.sqlite3
-SECRET.key
 email_archive
 email
