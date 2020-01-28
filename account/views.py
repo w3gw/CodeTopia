@@ -15,19 +15,14 @@ from django.urls import (
     reverse_lazy
 )
 
-from django.template import loader
-
-from django.core.mail import EmailMultiAlternatives
-
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
 from django.contrib.auth import (
-    REDIRECT_FIELD_NAME, get_user_model, login as auth_login,
+    login as auth_login,
     logout as auth_logout, update_session_auth_hash,
 )
-from django.contrib.auth.models import User
 from django.contrib.auth.views import (
     LoginView,
     LogoutView,

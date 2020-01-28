@@ -4,7 +4,6 @@ import unicodedata
 # Django related modules
 from django import forms
 
-from django.conf import settings
 from django.template import loader
 
 from django.contrib.sites.shortcuts import get_current_site
@@ -13,9 +12,6 @@ from django.contrib.auth import (
     authenticate, get_user_model, password_validation,
 )
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.hashers import (
-    UNUSABLE_PASSWORD_PREFIX, identify_hasher,
-)
 from django.contrib.auth.models import User
 
 from django.core.mail import EmailMultiAlternatives
