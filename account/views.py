@@ -21,7 +21,6 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
-from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth import (
     REDIRECT_FIELD_NAME, get_user_model, login as auth_login,
     logout as auth_logout, update_session_auth_hash,
@@ -309,7 +308,7 @@ class UserDashboard(LoginRequiredMixin, UserPassesTestMixin, View):
 
 class UserPasswordChangeView(PasswordContextMixin, FormView):
     form_class = PasswordChangeForm
-    success_url = reverse_lazy('password_change_done')
+    success_url = None
     template_name = "account/dashboard/change_password.html"
     title = _("CodeTopia | Chnage Password")
 
@@ -318,6 +317,13 @@ class UserPasswordChangeView(PasswordContextMixin, FormView):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+
+    def get_success_url(self):
+        """Return the URL to redirect to after processing a valid form."""
+        if self.success_url is not None:
+            url = self.success_url.format(**self.object.__dict__)
+        url = reverse(viewname="account:user_dashboard", kwargs={"username": self.request.user.username})
+        return url
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -330,3 +336,19 @@ class UserPasswordChangeView(PasswordContextMixin, FormView):
         # except the current one.
         update_session_auth_hash(self.request, form.user)
         return super().form_valid(form)
+
+    def post(self, request, *args, **kwargs):
+        """
+        Handle POST requests: instantiate a form instance with the passed
+        POST variables and then check if it's valid.
+        """
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    # PUT is a valid HTTP verb for creating (with a known URL) or editing an
+    # object, note that browsers only support POST for now.
+    def put(self, *args, **kwargs):
+        return self.post(*args, **kwargs)
