@@ -22,6 +22,7 @@ from django.utils.text import capfirst
 from django.utils.translation import gettext, gettext_lazy as _
 
 # Project modules
+from .models import Profile
 
 # Third party modules
 
@@ -161,6 +162,29 @@ class UserCreationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+class ProfileCreationForm(forms.ModelForm):
+    """
+    A form that creates a user, with no privileges, from the given username and password.
+    """
+
+    error_messages = {
+    }
+
+    help_texts = {
+    }
+
+    widget_attributes = {
+        # add common HTML attributes
+    }
+
+    class Meta:
+        model = Profile
+        exclude = []
+
+    def _post_clean(self):
+        super()._post_clean()
 
 
 class AuthenticationForm(forms.Form):

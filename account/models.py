@@ -5,6 +5,8 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 
+__all__ = [ "Profile" ]
+
 class HightSchoolManager(models.Manager):
     """Model Manager for Profile model"""
     def get_queryset(self):
