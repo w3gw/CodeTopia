@@ -5,9 +5,11 @@ from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import (
     render, 
-    HttpResponseRedirect, 
+    HttpResponseRedirect,
+    HttpResponsePermanentRedirect,
     resolve_url
 )
+from django.http import HttpResponseGone
 from django.urls import (
     reverse,
     reverse_lazy
@@ -316,9 +318,9 @@ class UserPasswordChangeView(PasswordContextMixin, FormView):
 
         # send password changed message
         messages.success(
-                request=self.request, 
-                message=self.success_messages.get("succesfull") 
-            )
+            request=self.request, 
+            message=self.success_messages.get("succesfull") 
+        )
 
         return super().form_valid(form)
 
@@ -357,87 +359,25 @@ class RedirectUser(View):
         """Redirect head request"""
         pass
 
-    def head(self, *args, **kwargs):
-        """Redirect head request"""
-        pass
-
     def post(self, *args, **kwargs):
-        """Redirect head request"""
+        """Redirect post request"""
         pass
 
     def options(self, *args, **kwargs):
-        """Redirect head request"""
+        """Redirect options request"""
         pass
 
     def delete(self, *args, **kwargs):
-        """Redirect head request"""
+        """Redirect delete request"""
         pass
 
     def put(self, *args, **kwargs):
-        """Redirect head request"""
+        """Redirect put request"""
         pass
 
     def patch(self, *args, **kwargs):
-        """Redirect head request"""
+        """Redirect patch request"""
         pass
-
-
-class RedirectView(View):
-    """Provide a redirect on any GET request."""
-    permanent = False
-    url = None
-    pattern_name = None
-    query_string = False
-
-    def get_redirect_url(self, *args, **kwargs):
-        """
-        Return the URL redirect to. Keyword arguments from the URL pattern
-        match generating the redirect request are provided as kwargs to this
-        method.
-        """
-        if self.url:
-            url = self.url % kwargs
-        elif self.pattern_name:
-            url = reverse(self.pattern_name, args=args, kwargs=kwargs)
-        else:
-            return None
-
-        args = self.request.META.get('QUERY_STRING', '')
-        if args and self.query_string:
-            url = "%s?%s" % (url, args)
-        return url
-
-    def get(self, request, *args, **kwargs):
-        url = self.get_redirect_url(*args, **kwargs)
-        if url:
-            if self.permanent:
-                return HttpResponsePermanentRedirect(url)
-            else:
-                return HttpResponseRedirect(url)
-        else:
-            logger.warning(
-                'Gone: %s', request.path,
-                extra={'status_code': 410, 'request': request}
-            )
-            return HttpResponseGone()
-
-    def head(self, request, *args, **kwargs):
-        return self.get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.get(request, *args, **kwargs)
-
-    def options(self, request, *args, **kwargs):
-        return self.get(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        return self.get(request, *args, **kwargs)
-
-    def put(self, request, *args, **kwargs):
-        return self.get(request, *args, **kwargs)
-
-    def patch(self, request, *args, **kwargs):
-        return self.get(request, *args, **kwargs)
 
 
 class UserDashboard(LoginRequiredMixin, UserPassesTestMixin, View):
