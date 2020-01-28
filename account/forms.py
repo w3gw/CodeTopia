@@ -34,7 +34,8 @@ UserModel = get_user_model()
 
 __all__ = [ 
     "AuthenticationForm",
-    "UserCreationForm"
+    "UserCreationForm",
+    "PasswordChangeForm"
 ]
 
 def _unicode_ci_compare(s1, s2):
@@ -350,11 +351,7 @@ class SetPasswordForm(forms.Form):
     new_password1 = forms.CharField(
         label=_("New password"),
         widget=forms.PasswordInput(attrs={
-            'autocomplete': 'new-password',
-            "class": "form-control",
-            "placeholder": "New Password",
-            "onfocus": "this.placeholder = ''",
-            "onblur": "this.placeholder = 'New Password'"
+            'autocomplete': 'new-password'
         }),
         strip=False,
         help_text=password_validation.password_validators_help_text_html(),
@@ -363,11 +360,7 @@ class SetPasswordForm(forms.Form):
         label=_("New password confirmation"),
         strip=False,
         widget=forms.PasswordInput(attrs={
-            'autocomplete': 'new-password',
-            "class": "form-control",
-            "placeholder": "New Password Confirm",
-            "onfocus": "this.placeholder = ''",
-            "onblur": "this.placeholder = 'New Password Confirm'"
+            'autocomplete': 'new-password'
         }),
     )
 
@@ -394,3 +387,36 @@ class SetPasswordForm(forms.Form):
         if commit:
             self.user.save()
         return self.user
+
+
+class PasswordChangeForm(SetPasswordForm):
+    """
+    A form that lets a user change their password by entering their old
+    password.
+    """
+    error_messages = {
+        # inherite error_message from SetPassword Form and add extra error_messages
+        **SetPasswordForm.error_messages,
+        'password_incorrect': _("Your old password was entered incorrectly. Please enter it again."),
+    }
+    old_password = forms.CharField(
+        label=_("Old password"),
+        strip=False,
+        widget=forms.PasswordInput(attrs={
+            'autofocus': True
+        }),
+    )
+
+    field_order = ['old_password', 'new_password1', 'new_password2']
+
+    def clean_old_password(self):
+        """
+            Validate that the old_password field is correct.
+        """
+        old_password = self.cleaned_data["old_password"]
+        if not self.user.check_password(old_password):
+            raise forms.ValidationError(
+                self.error_messages['password_incorrect'],
+                code='password_incorrect',
+            )
+        return old_password
