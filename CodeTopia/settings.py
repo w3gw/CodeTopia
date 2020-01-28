@@ -178,11 +178,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media_files')
 MEDIA_URL = '/media/'
 
 """Upload Related Settings"""
-DATA_UPLOAD_MAX_MEMORY_SIZE = 2621440 # 2.5MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 2621440  # 2.5MB
 
 FILE_UPLOAD_HANDLERS = [
     'django.core.files.uploadhandler.MemoryFileUploadHandler',
     'django.core.files.uploadhandler.TemporaryFileUploadHandler',
 ]
 
-FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440 # 2.5 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440  # 2.5 MB
