@@ -16,12 +16,35 @@ from django.utils.translation import gettext, gettext_lazy as _
 
 __all__ = [
     "Homepage",
+    "Elements"
 ]
 
 class Homepage(View):
     """Homepage View"""
     template_name = "index.html"
     title = _("CodeTopia")
+    extra_context = None
+
+    def get_context_data(self, **kwargs):
+        current_site = get_current_site(self.request)
+        context = {
+            'site': current_site,
+            'site_name': current_site.name,
+            'title': self.title,
+            **(self.extra_context or {})
+        }
+        return context
+
+    def get(self, *args, **kwargs):
+        return render(
+            request=self.request, 
+            template_name=self.template_name, 
+            context=self.get_context_data())
+
+class Elements(View):
+    """Homepage View"""
+    template_name = "elements.html"
+    title = _("CodeTopia | Elements")
     extra_context = None
 
     def get_context_data(self, **kwargs):
