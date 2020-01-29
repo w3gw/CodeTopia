@@ -3,3 +3,8 @@ __pycache__
 db.sqlite3
 email_archive
 email
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
