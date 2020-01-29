@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('', Homepage.as_view(), name="homepage"),
+    path('elements/', Elements.as_view(), name="elements"),
 
     path('', include('account.urls'))
 ]
