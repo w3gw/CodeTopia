@@ -4,6 +4,7 @@ from django.conf import settings
 
 from django.utils.translation import gettext_lazy as _
 
+import os
 
 __all__ = [ "Profile" ]
 
@@ -25,8 +26,8 @@ class PostGraduateManager(models.Manager):
 def get_profile_pic_path(instance, filename):
     """Method that returns upload location for the current user's profile picture"""
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
-    filename = instance.user, 's\'_profile_picure/%Y/%m/%d/'
-    return 'user_', instance.user, '/', filename
+    file_path = os.path.join("users_profile_pic", instance.user.username, filename)
+    return file_path
 
 class Profile(models.Model):
 
@@ -42,10 +43,7 @@ class Profile(models.Model):
     )
     profile_picture = models.ImageField(
         upload_to=get_profile_pic_path, 
-        verbose_name=_("Profile Picture"), 
-        height_field=300, 
-        width_field=300, 
-        max_length=100
+        verbose_name=_("Profile Picture")
     )
 
     education_background = models.CharField(
@@ -90,6 +88,7 @@ class Profile(models.Model):
         max_length=400, blank=True, null=True
     )
 
+    objects = models.Manager()
     highschool = HightSchoolManager()
     undergraduate = UnderGraduateManager()
     postgraduateManager = PostGraduateManager()
