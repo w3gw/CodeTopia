@@ -13,9 +13,47 @@
 
 // --------------------------------------------------------------------
 // Button Colors
+$primary: #44c767;
+$success: $primary;
+$info: #38a4ff;
+$warning: #f4e700;
+$danger: #f54940;
+
+.btn{
+	display: inline-block;
+    padding: 5px 15px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 400;
+    cursor: pointer;
+    border-radius: 5px;
+    outline: none !important;
+    box-shadow: none !important;
+    text-align: center;
+    border: 0;
+}
+
 // btn-primary
-// btn-secondary
-// btn-teritiary
-// btn-danger
+.btn-primary {
+    background-color: $primary;
+}
+
 // btn-success
+.btn-success {
+    background-color: $success;
+}
+
+// btn-info
+.btn-info {
+    background-color: $info;
+}
+
 // btn-warning
+.btn-warning {
+    background-color: $warning;
+}
+
+// btn-danger
+.btn-danger {
+    background-color: $danger;
+}
