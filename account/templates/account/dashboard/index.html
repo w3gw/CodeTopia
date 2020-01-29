@@ -29,7 +29,11 @@
 
 {% block content %}
 
-<h1>Wellcome {{ request.user.username }} to your dashboard</h1>
+<h1>
+  <img src="{{ request.user.profile.profile_picture.url }}" width="50" height="50" alt="{{ request.user.username }}s Profile Picture"> 
+  Wellcome {{ request.user.username }} to your dashboard
+</h1>
+
 <hr>
 <a href="{% url 'account:change_user_password' request.user.username %}">Change Password</a>
 <table id="user_info">
