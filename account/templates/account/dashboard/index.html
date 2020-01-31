@@ -30,8 +30,8 @@
 {% block content %}
 
 <h1>
-  <img src="{{ request.user.profile.profile_picture.url }}" width="50" height="50" alt="{{ request.user.username }}s Profile Picture"> 
-  Wellcome {{ request.user.username }} to your dashboard
+  <img src="{{ passed_user.profile.profile_picture.url }}" width="50" height="50" alt="{{ passed_user.username }}s Profile Picture"> 
+  Wellcome {{ passed_user.username }} to your dashboard
 </h1>
 
 <hr>
@@ -47,10 +47,10 @@
     </thead>
     <tbody>
         <tr>
-            <td>{{ request.user.username }}</td>
-            <td>{{ request.user.first_name }}</td>
-            <td>{{ request.user.last_name }}</td>
-            <td>{{ request.user.email }}</td>
+            <td>{{ passed_user.username }}</td>
+            <td>{{ passed_userfirst_name }}</td>
+            <td>{{ passed_user.last_name }}</td>
+            <td>{{ passed_user.email }}</td>
         </tr>
     </tbody>
 </table>

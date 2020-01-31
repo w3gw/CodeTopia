@@ -17,7 +17,7 @@ from django.urls import (
 
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 from django.contrib.auth import (
     login as auth_login,
@@ -70,7 +70,7 @@ __all__ = [
     "CustomPasswordResetConfirmView",
     "CustomPasswordResetCompleteView",
     "CreateUserView",
-    "UserDashboard",
+    "PrivateUserDashboard",
     "UserPasswordChangeView"
 ]
 
@@ -336,50 +336,18 @@ class UserPasswordChangeView(PasswordContextMixin, FormView):
         return self.post(*args, **kwargs)
 
 
-class RedirectUser(View):
-    """
-    Class for redirecting requests to user/<username> with permissions
-    """
-    permanent = True
-    user_private_dashboard_url = None
-    users_public_dashboard_url = None
-
-    def get_private_redirect_url(self, *args, **kwargs):
-        pass
-
-    def get_public_redirect_url(self, *args, **kwargs):
-        pass
-
-    def head(self, *args, **kwargs):
-        """Redirect head request"""
-        pass
-
-    def post(self, *args, **kwargs):
-        """Redirect post request"""
-        pass
-
-    def options(self, *args, **kwargs):
-        """Redirect options request"""
-        pass
-
-    def delete(self, *args, **kwargs):
-        """Redirect delete request"""
-        pass
-
-    def put(self, *args, **kwargs):
-        """Redirect put request"""
-        pass
-
-    def patch(self, *args, **kwargs):
-        """Redirect patch request"""
-        pass
-
-
-class UserDashboard(LoginRequiredMixin, UserPassesTestMixin, View):
+class PrivateUserDashboard(View, UserPassesTestMixin):
     """
     UserDashboard where only the user can access
     """
     template_name = "account/dashboard/index.html"
+    extra_context = None
+
+    def is_owner(self, user, request, *args, **kwargs):
+        return request.user.username == self.kwargs.get("username")
+
+    def get_test_func(self, request, *args, **kwargs):
+        return self.is_owner
 
     def get_context_data(self, **kwargs):
         context = {
@@ -387,17 +355,9 @@ class UserDashboard(LoginRequiredMixin, UserPassesTestMixin, View):
         }
         return context
 
-    def test_func(self):
-        """
-        Test the request sender if he has permission to access the page
-        """
-        return self.request.user.username == self.kwargs.get("username")
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(*args, **kwargs)
+        context["passed_user"] = request.user
 
-    def get_test_func(self):
-        """
-        Call all tests that has to be passed to access the page
-        """
-        return self.test_func
-
-    def get(self, *args, **kwargs):
-        return render(request=self.request, template_name=self.template_name, context=self.get_context_data())
+        return render(request=request, template_name=self.template_name, context=context)
