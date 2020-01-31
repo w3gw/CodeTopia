@@ -10,6 +10,7 @@ django = "==3.0.2"
 flake8 = "*"
 tox = "*"
 coverage = "*"
+pillow = "*"
 
 [requires]
 python_version = "3.7"
