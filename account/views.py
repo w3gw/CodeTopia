@@ -56,7 +56,9 @@ from .forms import (
     PasswordResetForm,
     SetPasswordForm,
     UserCreationForm,
-    PasswordChangeForm
+    PasswordChangeForm,
+    ProfileUpdateForm,
+    UserUpdateForm
 )
 
 # Third party modules
@@ -71,7 +73,8 @@ __all__ = [
     "CustomPasswordResetCompleteView",
     "CreateUserView",
     "PrivateUserDashboard",
-    "UserPasswordChangeView"
+    "UserPasswordChangeView",
+    "ProfileUpdate"
 ]
 
 class PasswordContextMixin:
@@ -146,6 +149,78 @@ class CreateUserView(View):
         self.extra_context = {
             **self.get_context_data(),
             "form": form
+        }
+        return render(request=self.request, template_name=self.template_name, context=self.get_context_data())
+
+
+class ProfileUpdate(View):
+    """Class for creating user with no priviledges"""
+
+    template_name = "account/dashboard/profile_edit.html"
+
+    profile_form_class = ProfileUpdateForm
+    user_form_class = UserUpdateForm
+
+    title = _('CodeTopia | Update Profile')
+    extra_context = None
+
+    # Error messages for the view
+    error_messages = {
+        "already_have_account": _("You already have an account and can not create another account.")
+    }
+    # Success messages for the view
+    success_messages = {
+        "profile_updated": _("Congradulation %s you have updated your profile succesfully.")
+    }
+
+    def get_context_data(self, *args, **kwargs):
+        """Return all context data by collecting it."""
+        current_site = get_current_site(self.request)
+        context = {
+            "site": current_site,
+            "site_name": current_site.name,
+            "title": self.title
+        }
+        context.update(**(self.extra_context or {}))
+        return context
+
+    def get_profile_form_class(self, *args, **kwargs):
+        """Return the instance of the for class to be used."""
+        return self.profile_form_class(*args)
+
+    def get_user_form_class(self, *args, **kwargs):
+        """Return the instance of the for class to be used."""
+        return self.user_form_class(*args)
+
+    def get(self, request, *args, **kwargs):
+
+        self.extra_context = {
+            "user_form": self.user_form_class(instance=request.user),
+            "profile_form": self.profile_form_class(instance=request.user.profile)
+        }
+        return render(request=request, template_name=self.template_name, context=self.get_context_data())
+
+    @method_decorator(sensitive_post_parameters())
+    @method_decorator(csrf_protect)
+    def post(self, *args, **kwargs):
+        user_form = self.user_form_class(instance=request.user, data=request.POST),
+        profile_form = self.profile_form_class(instance=request.user.profile, data=request.POST, files=request.FILES)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_cache = user_form.save()
+            profile_form.save()
+            messages.success(
+                request=self.request, 
+                message=self.success_messages.get("profile_updated") % user_cache.username 
+            )
+
+            return HttpResponseRedirect(reverse(viewname="account:user_dashboard"))
+
+        # If the form is invalid return the form with error messages
+        self.extra_context = {
+            **self.get_context_data(),
+            "user_form": user_form,
+            "profile_form": profile_form
         }
         return render(request=self.request, template_name=self.template_name, context=self.get_context_data())
 
