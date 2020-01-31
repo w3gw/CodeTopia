@@ -27,3 +27,9 @@
 ## 2020-01-28
 * added user dashboard
 * added password change functionality using old password
+
+## 2020-01-29
+* added Profile model for storing Profile data of a user
+
+## 2020-01-30
+* added automatic creation of user Profile using signal dispatchers
