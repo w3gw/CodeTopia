@@ -10,3 +10,7 @@ standard PEP8 uses 80 character as default, due to the setting.py module we used
 ```python
 class AdminDashboard:
 ```
+* when naming methods and functions use **_** for separating words like:
+```python
+def create_user():
+```
