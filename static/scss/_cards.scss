@@ -1,0 +1,9 @@
+// Cards
+.card {
+    box-shadow: $z-depth-1;
+    border: 0;
+    font-weight: 400;
+    .card-body {
+        padding: 10px;
+    }
+}
