@@ -29,6 +29,12 @@ def get_profile_pic_path(instance, filename):
     file_path = os.path.join("users_profile_pic", instance.user.username, filename)
     return file_path
 
+def get_default_profile_pic_path():
+    """Method that returns upload location for the current user's profile picture"""
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    file_path = os.path.join("users_profile_pic", "default.png")
+    return file_path
+
 class Profile(models.Model):
 
     class EducationBackground(models.TextChoices):
@@ -42,6 +48,7 @@ class Profile(models.Model):
         on_delete=models.CASCADE
     )
     profile_picture = models.ImageField(
+        default=get_default_profile_pic_path,
         upload_to=get_profile_pic_path, 
         verbose_name=_("Profile Picture")
     )
