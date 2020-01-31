@@ -5,23 +5,24 @@ from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import (
     render, 
-    HttpResponseRedirect, 
+    HttpResponseRedirect,
+    HttpResponsePermanentRedirect,
     resolve_url
 )
+from django.http import HttpResponseGone
 from django.urls import (
     reverse,
     reverse_lazy
 )
 
-from django.template import loader
-
-from django.core.mail import EmailMultiAlternatives
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 from django.contrib.auth import (
-    REDIRECT_FIELD_NAME, get_user_model, login as auth_login,
+    login as auth_login,
     logout as auth_logout, update_session_auth_hash,
 )
-from django.contrib.auth.models import User
 from django.contrib.auth.views import (
     LoginView,
     LogoutView,
@@ -32,7 +33,11 @@ from django.contrib.auth.views import (
 )
 
 from django.utils import timezone
+
 from django.utils.decorators import method_decorator
+from django.views.decorators.debug import sensitive_post_parameters
+from django.views.decorators.csrf import csrf_protect
+
 from django.utils.translation import gettext, gettext_lazy as _
 from django.utils.http import (
     url_has_allowed_host_and_scheme, urlsafe_base64_decode,
@@ -41,6 +46,7 @@ from django.utils.http import (
 from django.views.decorators.cache import never_cache
 
 from django.views.generic.base import View
+from django.views.generic.edit import FormView
 
 from django.contrib import messages
 
@@ -49,7 +55,8 @@ from .forms import (
     AuthenticationForm,
     PasswordResetForm,
     SetPasswordForm,
-    UserCreationForm
+    UserCreationForm,
+    PasswordChangeForm
 )
 
 # Third party modules
@@ -62,8 +69,22 @@ __all__ = [
     "CustomPasswordResetDoneView",
     "CustomPasswordResetConfirmView",
     "CustomPasswordResetCompleteView",
-    "CreateUserView"
+    "CreateUserView",
+    "UserDashboard",
+    "UserPasswordChangeView"
 ]
+
+class PasswordContextMixin:
+    extra_context = None
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'title': self.title,
+            **(self.extra_context or {})
+        })
+        return context
+
 
 class CreateUserView(View):
     """Class for creating user with no priviledges"""
@@ -108,6 +129,8 @@ class CreateUserView(View):
         }
         return render(request=self.request, template_name=self.template_name, context=self.get_context_data())
 
+    @method_decorator(sensitive_post_parameters())
+    @method_decorator(csrf_protect)
     def post(self, *args, **kwargs):
         form = self.get_form_class(self.request.POST)
         if form.is_valid():
@@ -247,3 +270,134 @@ class CustomPasswordResetCompleteView(PasswordResetCompleteView):
         context = super().get_context_data(**kwargs)
         context["login_url"] = resolve_url(settings.LOGIN_URL)
         return context
+
+
+class UserPasswordChangeView(PasswordContextMixin, FormView):
+    """
+    View for changing user password using validated old password.
+    Interface for UserDashboard
+    """
+    form_class = PasswordChangeForm
+    success_url = None
+    template_name = "account/dashboard/change_password.html"
+    title = _("CodeTopia | Chnage Password")
+
+    success_messages = {
+        "succesfull": _("You have successfully changed your password.")
+    }
+
+    @method_decorator(sensitive_post_parameters())
+    @method_decorator(csrf_protect)
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_success_url(self):
+        """Return the URL to redirect to after processing a valid form."""
+        if self.success_url is not None:
+            url = self.success_url.format(**self.object.__dict__)
+        url = reverse(viewname="account:user_dashboard", kwargs={"username": self.request.user.username})
+        return url
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        form.save()
+
+        # Log out the user from other sessions and update the current session with
+        # new password hash
+        update_session_auth_hash(self.request, form.user)
+
+        # send password changed message
+        messages.success(
+            request=self.request, 
+            message=self.success_messages.get("succesfull") 
+        )
+
+        return super().form_valid(form)
+
+    def post(self, request, *args, **kwargs):
+        """
+        Handle POST requests: instantiate a form instance with the passed
+        POST variables and then check if it's valid.
+        """
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    # PUT is a valid HTTP verb for creating (with a known URL) or editing an
+    # object, note that browsers only support POST for now.
+    def put(self, *args, **kwargs):
+        return self.post(*args, **kwargs)
+
+
+class RedirectUser(View):
+    """
+    Class for redirecting requests to user/<username> with permissions
+    """
+    permanent = True
+    user_private_dashboard_url = None
+    users_public_dashboard_url = None
+
+    def get_private_redirect_url(self, *args, **kwargs):
+        pass
+
+    def get_public_redirect_url(self, *args, **kwargs):
+        pass
+
+    def head(self, *args, **kwargs):
+        """Redirect head request"""
+        pass
+
+    def post(self, *args, **kwargs):
+        """Redirect post request"""
+        pass
+
+    def options(self, *args, **kwargs):
+        """Redirect options request"""
+        pass
+
+    def delete(self, *args, **kwargs):
+        """Redirect delete request"""
+        pass
+
+    def put(self, *args, **kwargs):
+        """Redirect put request"""
+        pass
+
+    def patch(self, *args, **kwargs):
+        """Redirect patch request"""
+        pass
+
+
+class UserDashboard(LoginRequiredMixin, UserPassesTestMixin, View):
+    """
+    UserDashboard where only the user can access
+    """
+    template_name = "account/dashboard/index.html"
+
+    def get_context_data(self, **kwargs):
+        context = {
+            "title": _("CodeTopia | %s"% self.kwargs.get("username"))
+        }
+        return context
+
+    def test_func(self):
+        """
+        Test the request sender if he has permission to access the page
+        """
+        return self.request.user.username == self.kwargs.get("username")
+
+    def get_test_func(self):
+        """
+        Call all tests that has to be passed to access the page
+        """
+        return self.test_func
+
+    def get(self, *args, **kwargs):
+        return render(request=self.request, template_name=self.template_name, context=self.get_context_data())
