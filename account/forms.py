@@ -8,6 +8,10 @@ from django.template import loader
 
 from django.contrib.sites.shortcuts import get_current_site
 
+from django.contrib.auth.hashers import (
+    UNUSABLE_PASSWORD_PREFIX, identify_hasher,
+)
+
 from django.contrib.auth import (
     authenticate, get_user_model, password_validation,
 )
@@ -32,7 +36,9 @@ UserModel = get_user_model()
 __all__ = [ 
     "AuthenticationForm",
     "UserCreationForm",
-    "PasswordChangeForm"
+    "PasswordChangeForm",
+    "UserUpdateForm",
+    "ProfileUpdateForm"
 ]
 
 def _unicode_ci_compare(s1, s2):
@@ -164,7 +170,7 @@ class UserCreationForm(forms.ModelForm):
         return user
 
 
-class ProfileCreationForm(forms.ModelForm):
+class ProfileUpdateForm(forms.ModelForm):
     """
     A form that creates a user, with no privileges, from the given username and password.
     """
@@ -177,7 +183,7 @@ class ProfileCreationForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = '__all__'
+        exclude = ["user"]
         labels = {
             'profile_picture': Profile._meta.get_field("profile_picture").verbose_name
         }
@@ -201,6 +207,51 @@ class ProfileCreationForm(forms.ModelForm):
 
     def _post_clean(self):
         super()._post_clean()
+
+
+class ReadOnlyPasswordHashWidget(forms.Widget):
+    template_name = 'auth/widgets/read_only_password_hash.html'
+    read_only = True
+
+    def get_context(self, name, value, attrs):
+        context = super().get_context(name, value, attrs)
+        summary = []
+        if not value or value.startswith(UNUSABLE_PASSWORD_PREFIX):
+            summary.append({'label': gettext("No password set.")})
+        else:
+            try:
+                hasher = identify_hasher(value)
+            except ValueError:
+                summary.append({'label': gettext("Invalid password format or unknown hashing algorithm.")})
+            else:
+                for key, value_ in hasher.safe_summary(value).items():
+                    summary.append({'label': gettext(key), 'value': value_})
+        context['summary'] = summary
+        return context
+
+
+class ReadOnlyPasswordHashField(forms.Field):
+    widget = ReadOnlyPasswordHashWidget
+
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("required", False)
+        super().__init__(*args, **kwargs)
+
+    def bound_data(self, data, initial):
+        # Always return initial because the widget doesn't
+        # render an input field.
+        return initial
+
+    def has_changed(self, initial, data):
+        return False
+
+
+class UserUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = ["username", "first_name", "last_name", "email"]
+        field_classes = {'username': UsernameField}
 
 
 class AuthenticationForm(forms.Form):
