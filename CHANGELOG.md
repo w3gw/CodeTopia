@@ -33,3 +33,7 @@
 
 ## 2020-01-30
 * added automatic creation of user Profile using signal dispatchers
+
+## 2020-01-31
+* fixed some configuration issues
+* added profile update functionality

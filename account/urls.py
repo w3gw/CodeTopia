@@ -30,5 +30,6 @@ urlpatterns = [
 
     path('user/<username>/', PrivateUserDashboard.as_view(), name="user_dashboard"),
 
+    path('user/<username>/profile-update/', ProfileUpdate.as_view(), name="update_profile"),
     path('user/<username>/change-password/', UserPasswordChangeView.as_view(), name="change_user_password"),
 ]
