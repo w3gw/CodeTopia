@@ -202,9 +202,13 @@ class ProfileUpdate(View):
 
     @method_decorator(sensitive_post_parameters())
     @method_decorator(csrf_protect)
-    def post(self, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         user_form = self.user_form_class(instance=request.user, data=request.POST),
-        profile_form = self.profile_form_class(instance=request.user.profile, data=request.POST, files=request.FILES)
+        profile_form = self.profile_form_class(
+            instance=request.user.profile, 
+            data=request.POST, 
+            files=request.FILES
+        )
 
         if user_form.is_valid() and profile_form.is_valid():
             user_cache = user_form.save()
