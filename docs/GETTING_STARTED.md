@@ -55,4 +55,14 @@ Create a branch and work on your idea. To do this run.
 
 ```git checkout -b <branch name>```
 
+## You can also use docker whcih makes it easier to set up your envirounment
+* install docker
+* run:
+```bash
+docker-compose build
+```
+```bash
+docker-compose up
+```
+
 Done! your ready to go.
