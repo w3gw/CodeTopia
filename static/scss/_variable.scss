@@ -8,6 +8,10 @@
 $link-color: #0275d8 !default; // Normal link color
 $link-hover-color: darken($link-color, 50%) !default; // Link color when hovered over
 
+// Forms
+$input-error-color:        $error-color !default;
+$input-success-color:      $success-color !default;
+
 // Box shadows
 $z-depth-1:          0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12) !default;
 $z-depth-1-half:     0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15) !default;
