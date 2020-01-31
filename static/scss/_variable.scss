@@ -1,11 +1,21 @@
 // Variables
+// Common variables to be used ny the rest of the sass files
 // --------------------------------------------------------------------
 
 // Colors
 
-// Blockquote
-.blockquote {
-  padding: 20px 50px 20px 20px;
-  background: #fff;
-  border-left: 10px solid #f8b600;
-}
+// Link Color
+$link-color: #0275d8 !default; // Normal link color
+$link-hover-color: darken($link-color, 50%) !default; // Link color when hovered over
+
+// Box shadows
+$z-depth-1:          0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12) !default;
+$z-depth-1-half:     0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15) !default;
+$z-depth-2:          0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !default;
+$z-depth-3:          0 12px 15px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19) !default;
+$z-depth-4:          0 16px 28px 0 rgba(0, 0, 0, 0.22), 0 25px 55px 0 rgba(0, 0, 0, 0.21) !default;
+$z-depth-5:          0 27px 24px 0 rgba(0, 0, 0, 0.2), 0 40px 77px 0 rgba(0, 0, 0, 0.22) !default;
+
+// Transitions
+$transition-basic:            all .2s ease-in-out !default;
+$transition-hoverable:        all .55s ease-in-out !default;
