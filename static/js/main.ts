@@ -40,6 +40,8 @@ function copy_to_clipboard(input_id:string){
     // Note: The document.execCommand() method is not supported in IE8 and earlier.
 }
 
-const data:any = Handlebars.compile("{{ name }}")
+function disable_btn(btn_id:string) {
+    document.getElementById(btn_id).disabled = true;
+}
 
-export { copy_to_clipboard, caps_lock_on, show_password }
+export { copy_to_clipboard, caps_lock_on, show_password, disable_btn }
