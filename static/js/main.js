@@ -11,14 +11,17 @@ function show_password(form_id) {
 }
 function caps_lock_on(field_id, message_div_id) {
     // display cas lock is on message
+    var message = "Caps lock is On.";
+    // Get field instance
     var input = document.getElementById(field_id);
-    var message = "Caps Lock is On";
     input.addEventListener("keyup", function (event) {
         if (event.getModifiedState("CapsLock")) {
             // display message
+            document.getElementById(message_div_id).innerHTML = message;
         }
         else {
             // Hide message
+            document.getElementById(message_div_id).innerHTML = "";
         }
     });
 }
@@ -30,3 +33,4 @@ function copy_to_clipboard(input_id) {
     input_instance.clearSelected();
     // Note: The document.execCommand() method is not supported in IE8 and earlier.
 }
+//# sourceMappingURL=main.js.map

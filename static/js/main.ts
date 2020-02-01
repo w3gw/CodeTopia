@@ -1,4 +1,4 @@
-
+import "./lib/handlebar.js"
 
 function show_password(form_id:string) {
     // function for revealing password data from password field
@@ -14,14 +14,17 @@ function show_password(form_id:string) {
 
 function caps_lock_on(field_id:string, message_div_id:string){
     // display cas lock is on message
+    const message:string = "Caps lock is On."
+    // Get field instance
     var input:any = document.getElementById(field_id)
-    var message:string = "Caps Lock is On"
 
     input.addEventListener("keyup", (event:any) => {
         if (event.getModifiedState("CapsLock")){
             // display message
+            document.getElementById(message_div_id).innerHTML = message
         } else {
             // Hide message
+            document.getElementById(message_div_id).innerHTML = ""
         }
     })
 }
@@ -36,3 +39,7 @@ function copy_to_clipboard(input_id:string){
     input_instance.clearSelected()
     // Note: The document.execCommand() method is not supported in IE8 and earlier.
 }
+
+const data:any = Handlebars.compile("{{ name }}")
+
+export { copy_to_clipboard, caps_lock_on, show_password }
