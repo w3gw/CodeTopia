@@ -1,30 +1,7 @@
 {% extends 'base/base.html' %}
 
 {% block header %}
-<style>
-    #user_info {
-      font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-      border-collapse: collapse;
-      width: 100%;
-    }
-    
-    #user_info td, #user_info th {
-      border: 1px solid #ddd;
-      padding: 8px;
-    }
-    
-    #user_info tr:nth-child(even){background-color: #f2f2f2;}
-    
-    #user_info tr:hover {background-color: #ddd;}
-    
-    #custouser_infomers th {
-      padding-top: 12px;
-      padding-bottom: 12px;
-      text-align: left;
-      background-color: #4CAF50;
-      color: white;
-    }
-    </style>
+
 {% endblock header %}
 
 {% block content %}
@@ -32,24 +9,22 @@
 <h1>Wellcome {{ request.user.username }} to your dashboard</h1>
 <hr>
 <a href="{% url 'account:change_user_password' request.user.username %}">Change Password</a>
-<table id="user_info">
-    <thead>
-        <tr>
-            <td>username</td>
-            <td>first name</td>
-            <td>last name</td>
-            <td>email</td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>{{ request.user.username }}</td>
-            <td>{{ request.user.first_name }}</td>
-            <td>{{ request.user.last_name }}</td>
-            <td>{{ request.user.email }}</td>
-        </tr>
-    </tbody>
+
+<table class="table-hover">
+  <tr class="thead-success">
+    <th>username</th>
+    <th>first name</th>
+    <th>last name</th>
+    <th>email</th>
+  </tr>
+  <tr>
+    <td>{{ request.user.username }}</td>
+    <td>{{ request.user.first_name }}</td>
+    <td>{{ request.user.last_name }}</td>
+    <td>{{ request.user.email }}</td>
+  </tr>
 </table>
+
 
 {% endblock content %}
 
