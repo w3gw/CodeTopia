@@ -91,7 +91,7 @@ class TestCustomLoginView(TestCase):
             first=response.context["title"], 
             second="CodeTopia", 
             msg="Redirect target page title Error" )
-        self.assertTemplateUsed(response=response, template_name="index.html", count=1)
+        self.assertTemplateUsed(response=response, template_name="core/index.html", count=1)
 
     @override_settings(LOGIN_URL=reverse("homepage"))
     def test_CustomLoginView_post1_invalid(self):
@@ -99,8 +99,10 @@ class TestCustomLoginView(TestCase):
         c = Client(HTTP_USER_AGENT='Mozilla/5.0', enforce_csrf_checks=False)
         response = c.post(
             reverse("account:user_login"),
-            {"username": self.user2_cridentials["username"],
-             "password": self.user1_cridentials["password"]},
+            {
+                "username": self.user2_cridentials["username"],
+                "password": self.user1_cridentials["password"]
+            },
             follow=True
         )
         # test wether the redirect target status_code is 200
@@ -167,4 +169,4 @@ class TestCustomLogoutView(TestCase):
             msg_prefix='', 
             fetch_redirect_response=True)
         self.assertEqual(first=response.context["title"], second="CodeTopia" )
-        self.assertTemplateUsed(response=response, template_name="index.html", msg_prefix="")
+        self.assertTemplateUsed(response=response, template_name="core/index.html", msg_prefix="")
