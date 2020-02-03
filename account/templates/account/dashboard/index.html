@@ -6,9 +6,14 @@
 
 {% block content %}
 
-<h1>Wellcome {{ request.user.username }} to your dashboard</h1>
+<h1>
+  <img src="{{ passed_user.profile.profile_picture.url }}" width="50" height="50" alt="{{ passed_user.username }}s Profile Picture"> 
+  Wellcome {{ passed_user.username }} to your dashboard
+</h1>
+
 <hr>
 <a href="{% url 'account:change_user_password' request.user.username %}">Change Password</a>
+<a href="{% url 'account:update_profile' request.user.username %}">Update Profile</a>
 
 <table class="table-hover">
   <tr class="thead-success">

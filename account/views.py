@@ -17,7 +17,7 @@ from django.urls import (
 
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 from django.contrib.auth import (
     login as auth_login,
@@ -56,7 +56,9 @@ from .forms import (
     PasswordResetForm,
     SetPasswordForm,
     UserCreationForm,
-    PasswordChangeForm
+    PasswordChangeForm,
+    ProfileUpdateForm,
+    UserUpdateForm
 )
 
 # Third party modules
@@ -70,8 +72,9 @@ __all__ = [
     "CustomPasswordResetConfirmView",
     "CustomPasswordResetCompleteView",
     "CreateUserView",
-    "UserDashboard",
-    "UserPasswordChangeView"
+    "PrivateUserDashboard",
+    "UserPasswordChangeView",
+    "ProfileUpdate"
 ]
 
 class PasswordContextMixin:
@@ -146,6 +149,82 @@ class CreateUserView(View):
         self.extra_context = {
             **self.get_context_data(),
             "form": form
+        }
+        return render(request=self.request, template_name=self.template_name, context=self.get_context_data())
+
+
+class ProfileUpdate(View):
+    """Class for creating user with no priviledges"""
+
+    template_name = "account/dashboard/profile_edit.html"
+
+    profile_form_class = ProfileUpdateForm
+    user_form_class = UserUpdateForm
+
+    title = _('CodeTopia | Update Profile')
+    extra_context = None
+
+    # Error messages for the view
+    error_messages = {
+        "already_have_account": _("You already have an account and can not create another account.")
+    }
+    # Success messages for the view
+    success_messages = {
+        "profile_updated": _("Congradulation %s you have updated your profile succesfully.")
+    }
+
+    def get_context_data(self, *args, **kwargs):
+        """Return all context data by collecting it."""
+        current_site = get_current_site(self.request)
+        context = {
+            "site": current_site,
+            "site_name": current_site.name,
+            "title": self.title
+        }
+        context.update(**(self.extra_context or {}))
+        return context
+
+    def get_profile_form_class(self, *args, **kwargs):
+        """Return the instance of the for class to be used."""
+        return self.profile_form_class(*args)
+
+    def get_user_form_class(self, *args, **kwargs):
+        """Return the instance of the for class to be used."""
+        return self.user_form_class(*args)
+
+    def get(self, request, *args, **kwargs):
+
+        self.extra_context = {
+            "user_form": self.user_form_class(instance=request.user),
+            "profile_form": self.profile_form_class(instance=request.user.profile)
+        }
+        return render(request=request, template_name=self.template_name, context=self.get_context_data())
+
+    @method_decorator(sensitive_post_parameters())
+    @method_decorator(csrf_protect)
+    def post(self, request, *args, **kwargs):
+        user_form = self.user_form_class(instance=request.user, data=request.POST),
+        profile_form = self.profile_form_class(
+            instance=request.user.profile, 
+            data=request.POST, 
+            files=request.FILES
+        )
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_cache = user_form.save()
+            profile_form.save()
+            messages.success(
+                request=self.request, 
+                message=self.success_messages.get("profile_updated") % user_cache.username 
+            )
+
+            return HttpResponseRedirect(reverse(viewname="account:user_dashboard"))
+
+        # If the form is invalid return the form with error messages
+        self.extra_context = {
+            **self.get_context_data(),
+            "user_form": user_form,
+            "profile_form": profile_form
         }
         return render(request=self.request, template_name=self.template_name, context=self.get_context_data())
 
@@ -336,50 +415,18 @@ class UserPasswordChangeView(PasswordContextMixin, FormView):
         return self.post(*args, **kwargs)
 
 
-class RedirectUser(View):
-    """
-    Class for redirecting requests to user/<username> with permissions
-    """
-    permanent = True
-    user_private_dashboard_url = None
-    users_public_dashboard_url = None
-
-    def get_private_redirect_url(self, *args, **kwargs):
-        pass
-
-    def get_public_redirect_url(self, *args, **kwargs):
-        pass
-
-    def head(self, *args, **kwargs):
-        """Redirect head request"""
-        pass
-
-    def post(self, *args, **kwargs):
-        """Redirect post request"""
-        pass
-
-    def options(self, *args, **kwargs):
-        """Redirect options request"""
-        pass
-
-    def delete(self, *args, **kwargs):
-        """Redirect delete request"""
-        pass
-
-    def put(self, *args, **kwargs):
-        """Redirect put request"""
-        pass
-
-    def patch(self, *args, **kwargs):
-        """Redirect patch request"""
-        pass
-
-
-class UserDashboard(LoginRequiredMixin, UserPassesTestMixin, View):
+class PrivateUserDashboard(View, UserPassesTestMixin):
     """
     UserDashboard where only the user can access
     """
     template_name = "account/dashboard/index.html"
+    extra_context = None
+
+    def is_owner(self, user, request, *args, **kwargs):
+        return request.user.username == self.kwargs.get("username")
+
+    def get_test_func(self, request, *args, **kwargs):
+        return self.is_owner
 
     def get_context_data(self, **kwargs):
         context = {
@@ -387,17 +434,9 @@ class UserDashboard(LoginRequiredMixin, UserPassesTestMixin, View):
         }
         return context
 
-    def test_func(self):
-        """
-        Test the request sender if he has permission to access the page
-        """
-        return self.request.user.username == self.kwargs.get("username")
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(*args, **kwargs)
+        context["passed_user"] = request.user
 
-    def get_test_func(self):
-        """
-        Call all tests that has to be passed to access the page
-        """
-        return self.test_func
-
-    def get(self, *args, **kwargs):
-        return render(request=self.request, template_name=self.template_name, context=self.get_context_data())
+        return render(request=request, template_name=self.template_name, context=context)
