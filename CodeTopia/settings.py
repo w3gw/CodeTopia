@@ -37,6 +37,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     # Project app
     'account.apps.AccountConfig',
+    'core.apps.CoreConfig',
 
     # Third party apps
 
