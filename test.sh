@@ -1,3 +1,4 @@
+# Shell script for runing tests  locally
 
 coverage erase
 flake8

@@ -11,11 +11,15 @@ Install the following softwares and dependecies before starting.
 
 * upgrade your python package manager pip
 
-    ```python -m pip install --upgrade pip```
+    ```bash
+    python -m pip install --upgrade pip
+    ```
 
 * install pipenv for package control.
 
-    ```pip install pipenv```
+    ```bash
+    pip install pipenv
+    ```
 
 ## 2, Fork this project to your own GitHub account.
 
@@ -29,7 +33,7 @@ git clone https://github.com/endalk200/CodeTopia.git
 
 Keeping your master branch is verry crucial since there may be some changes made after forking the repo. You should regulary update your master branch. To dod this run the following command.
 
-``` 
+```bash
 git add upstream https://github.com/endalk200/CodeTopia.git
 
 git fetch upstream 
@@ -43,17 +47,24 @@ git pull
 
 run this command to install all dependencies.
 
-```pipenv install```
+```bash
+pipenv install
+```
 
 ## 6, Run tests
 
-``` ./test.sh ```
+```bash
+flake8
+python manage.py test
+```
 
 ## 6, Create a branch to work on.
 
 Create a branch and work on your idea. To do this run.
 
-```git checkout -b <branch name>```
+```bash
+git checkout -b <branch name>
+```
 
 ## You can also use docker whcih makes it easier to set up your envirounment
 * install docker

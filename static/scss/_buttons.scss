@@ -12,26 +12,28 @@
 // btn-xlg Dimensions
 
 // --------------------------------------------------------------------
-// Button Colors
-$primary: #44c767;
-$success: #4CAF50;
-$info: #38a4ff;
-$warning: #f4e700;
-$danger: #f54940;
 
 .btn {
     display: inline-block;
     color: #fff;
     padding: 8px 15px;
+    margin: 10px 0;
     font-size: 14px;
     font-weight: 400;
     cursor: pointer;
     border-radius: 0;
     outline: none !important;
     text-align: center;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
-    &:hover{
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: $z-depth-1;
+    &:hover,
+    &:active,
+    &:focus {
+        box-shadow: $z-depth-1-half;
+        outline: 0;
+    }
+    &:not([disabled]):not(.disabled):active,
+    &:not([disabled]):not(.disabled).active {
+        box-shadow: $z-depth-1-half;
     }
     -webkit-transition: all 0.3s ease 0s;
     -moz-transition: all 0.3s ease 0s;
@@ -52,6 +54,10 @@ $danger: #f54940;
 .btn-lg {
     padding: 10px 15px;
     font-size: 17px;
+}
+
+.btn-block {
+    width: 100%;
 }
 
 // btn-primary
