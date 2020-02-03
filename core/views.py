@@ -21,7 +21,7 @@ __all__ = [
 
 class Homepage(View):
     """Homepage View"""
-    template_name = "index.html"
+    template_name = "core/index.html"
     title = _("CodeTopia")
     extra_context = None
 
@@ -43,7 +43,7 @@ class Homepage(View):
 
 class Elements(View):
     """Homepage View"""
-    template_name = "elements.html"
+    template_name = "core/elements.html"
     title = _("CodeTopia | Elements")
     extra_context = None
 
