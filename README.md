@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.com/endalk200/CodeTopia.svg?branch=master)](https://travis-ci.com/endalk200/CodeTopia) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
+[![Telegram Group](https://img.shields.io/badge/Telegram-Group-blue.svg)](https://telegram.me/CodeTopia)
+
 # CodeTopia
 
 ## :vulcan_salute: WELLCOME to CodeTopia.
