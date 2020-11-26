@@ -23,4 +23,4 @@ CodeTopia is Open Source Web application created by Ethiopian Developers and we 
 
 ## Contribute
 
-If you are interested in contributing to this project read [contributing doc](https://github.com/endalk200/CodeTopia/blob/master/docs/CONTRIBUTING.md).
+If you are interested in contributing to this project read [contributing doc](https://github.com/w3gw/CodeTopia/blob/master/docs/CONTRIBUTING.md).
